@@ -51,5 +51,9 @@ em3 ---> SOC-MGMT (Security Management Zone): Dedicated to security administrato
 **PHASE 2**
 Phase 2 focuses on establishing Client Access, Interface Re-Addressing, and Zero-Trust Baseline Rules.
 
-
+For this phase, we need a virtual machine. Because the firewall's LAN is placed on an isolated VMware LAN segment, the host PC cannot access it. Attaching Kali Linux to "User-LAN" puts a machine directly inside the internal network to access the web management portal of OPNsense and later serve as our security testing machine.
+1. So we changed the Kali Linux VM's network adapter to the User-LAN segment.
+2. Booted Kali and automatically received an IP address from OPNsense via DHCP. Using the command: "sudo nmcli networking off && sudo nmcli networking on"
+3. Verified connectivity to the OPNsense LAN gateway (192.168.1.1)
+4. Logged into the OPNsense Web GUI to begin setup.
 
