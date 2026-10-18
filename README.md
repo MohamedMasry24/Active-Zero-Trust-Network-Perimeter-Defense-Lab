@@ -8,7 +8,7 @@ Every device or user must prove they are allowed to access a resource. Being con
 
 Zero Trust operates on 3 principles: 
 1. Principle of least privilege 
-Never Trust, Always Verify 
+2.Never Trust, Always Verify 
 3. Assume everything is a data breach
 
 So in this project, we are making a fully virtualized network. Instead of relying on traditional, flat network topologies where everything trusts everything, we will enforce continuous verification, strict microsegmentation, deep packet inspection, and explicit access controls across multiple isolated security zones.
@@ -21,3 +21,35 @@ Our technical objectives:
 -Attack Simulation & Defensive Validation: Test the network's security by simulating attacks from untrusted and user networks to check whether security rules block unauthorized access and security alerts work correctly.
 
 For this project, we will need to use **OPNsense**
+
+What is OPNsense? 
+
+ OPNsense is deployed as our all-in-one network security gateway, functioning simultaneously as a Stateful Firewall, Intrusion Detection System (IDS), and Intrusion Prevention System (IPS) to monitor, filter, and actively protect our network environment.
+
+
+## Network Architecture & Adapter Topology
+
+To enforce strict microsegmentation and prevent lateral movement, the firewall interfaces are decoupled into discrete Layer 2 broadcast domains using VMware LAN Segments and host NAT.
+
+**PHASE 1 ** 
+In this phase, we will be provisioning the OPNsense virtual machine, and we configured four distinct network interfaces to eliminate flat network broadcast leakage.
+
+**First interface** 
+em0 --> WAN, which connects the firewall and authorized internal devices to the internet for updates, package downloads, etc. All unsolicited incoming connections are blocked, while permitted outgoing connections and their return traffic are allowed.
+
+**Second interface**
+em1 ---> User-LAN (Internal Client Zone): Contains employee computers and test devices. Users can access the internet and approved internal services, but they are blocked from accessing the firewall's administrative interface to prevent unauthorized changes.
+
+**Third interface**
+em2 ---> DMZ (Isolated Services Zone): Hosts services such as web servers that need to be accessible to users. Only approved connections are allowed, and DMZ devices cannot initiate connections to the internal user or management networks, helping prevent attackers from spreading if a server is compromised.
+
+** Fourth interface**
+em3 ---> SOC-MGMT (Security Management Zone): Dedicated to security administrators and monitoring tools. Only this zone can access the firewall's management interfaces, keeping administrative access separate from regular user traffic to reduce the risk of unauthorized access and attacks.
+
+------------------------------------------------------
+
+**PHASE 2**
+Phase 2 focuses on establishing Client Access, Interface Re-Addressing, and Zero-Trust Baseline Rules.
+
+
+
