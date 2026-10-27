@@ -61,5 +61,57 @@ For this phase, we need a virtual machine. Because the firewall's LAN is placed 
 <img width="637" height="96" alt="image" src="https://github.com/user-attachments/assets/bd4e40ee-410f-4972-91f5-9ee02f8dff0c" />
 
 
+1. Interface Assignment
 
+After accessing the OPNsense Web GUI through Kali Linux, we configured the firewall's four interfaces with their final IP addresses:
+
+em0 (WAN): Configured to obtain an IP address automatically through DHCP from VMware NAT.
+
+em1 (User-LAN): Changed from the default 192.168.1.1/24 to the static IP 10.0.10.1/24.
+
+em2 (DMZ): Enabled and assigned the static IP 10.0.20.1/24.
+
+em3 (SOC-MGMT): Enabled and assigned the static IP 10.0.30.1/24.
+
+Each internal interface now serves as the gateway for its own subnet, keeping the three network zones on separate IP networks.
+
+2. DHCP and DNS Configuration
+
+DHCP was enabled on all three internal networks so connected devices could automatically receive IP addresses.
+
+Dynamic address range: .50 to .150 within each subnet.
+
+Reserved range: .2 to .49, intended for servers and infrastructure requiring fixed IP addresses.
+
+Expansion range: .151 to .254, left available for future devices.
+
+The OPNsense DNS service was configured to listen on port 53 across the internal interfaces and forward DNS requests to upstream resolvers through the WAN. This allows internal devices to resolve domain names, such as google.com, into IP addresses.
+
+3. Outbound Network Address Translation (NAT)
+
+Automatic Source NAT was enabled to allow devices on the internal networks to access the internet through the firewall's WAN connection.
+
+The configured internal subnets are:
+
+User-LAN: 10.0.10.0/24
+
+DMZ: 10.0.20.0/24
+
+SOC-MGMT: 10.0.30.0/24
+
+When internal devices send traffic to the internet, the firewall translates their source IP addresses to its WAN IP address. This allows multiple internal devices to share the same external connection.
+
+4. Verification and Test Results
+
+After configuration, we performed the following tests to confirm that the network services and connectivity were working correctly.
+
+DHCP Test: Renewed the Kali Linux workstation's DHCP lease on eth0 and confirmed that it received an IP address from the User-LAN subnet (10.0.10.0/24).
+
+DNS Test: Executed dig google.com @10.0.10.1. The query returned NOERROR with valid DNS answers, confirming that the firewall's DNS service was responding successfully.
+
+Internet Connectivity and NAT Test: Used ping -c 3 8.8.8.8 and curl -I https://www.google.com to verify external connectivity. Successful results confirmed that outgoing traffic and its return traffic could pass through the firewall.
+
+Gateway Connectivity Test: Sent ICMP ping requests to 10.0.20.1 (DMZ gateway) and 10.0.30.1 (SOC-MGMT gateway). Successful responses confirmed that these firewall interfaces were reachable from the test environment.
+
+These tests confirmed that the initial network configuration, DHCP, DNS, outbound NAT, internet connectivity, and gateway reachability were functioning as expected.
 
