@@ -57,3 +57,9 @@ For this phase, we need a virtual machine. Because the firewall's LAN is placed 
 3. Verified connectivity to the OPNsense LAN gateway (192.168.1.1)
 4. Logged into the OPNsense Web GUI to begin setup.
 
+
+<img width="637" height="96" alt="image" src="https://github.com/user-attachments/assets/bd4e40ee-410f-4972-91f5-9ee02f8dff0c" />
+
+
+
+
